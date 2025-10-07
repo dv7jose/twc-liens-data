@@ -60,7 +60,7 @@ df["employer_name"] = df["employer_name"].apply(title_clean)
 df["employer_address_1"] = df["employer_address_1"].apply(title_clean)
 df["employer_address_2"] = df["employer_address_2"].apply(title_clean)
 
-# Reorder columns
+# Reorder and rename columns in Title Case for Datawrapper
 df = df[
     [
         "employer_name",
@@ -73,6 +73,17 @@ df = df[
     ]
 ]
 
-print(f"✅ Cleaned {len(df)} rows × {len(df.columns)} columns")
+# Title Case the column headers for output
+df.columns = [
+    "Employer Name",
+    "Employer Address 1",
+    "Employer Address 2",
+    "City",
+    "State Zip",
+    "First Date of Lien",
+    "Delinquent Amount",
+]
+
+print(f"✅ Cleaned {len(df)} rows × {len(df.columns)} columns (Title Case headers)")
 df.to_csv("liens.csv", index=False)
 print("✅ liens.csv written successfully.")
