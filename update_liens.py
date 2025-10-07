@@ -7,5 +7,6 @@ r = requests.get(url)
 with open("liens.xlsx", "wb") as f:
     f.write(r.content)
 
-df = pd.read_excel("liens.xlsx")
+df = pd.read_excel("liens.xlsx", engine="openpyxl")
 df.to_csv("liens.csv", index=False)
+
