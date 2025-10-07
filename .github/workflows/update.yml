@@ -2,8 +2,8 @@ name: Fast update CSV
 
 on:
   schedule:
-    - cron: "0 12 * * *"   # every day at 7 AM CT
-  workflow_dispatch:       # allows manual trigger
+    - cron: "0 12 * * *"   # daily 7 AM CT
+  workflow_dispatch:
 
 jobs:
   update:
@@ -13,16 +13,15 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install LibreOffice
-        run: sudo apt-get update && sudo apt-get install -y libreoffice
-
-      - name: Run R script
-        run: Rscript update_liens.R
+      - name: Run Python script
+        run: |
+          pip install pandas openpyxl
+          python update_liens.py
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add liens.csv || true
-          git commit -m "fast auto-update liens CSV" || echo "No changes"
+          git commit -m "auto-update liens CSV" || echo "No changes"
           git push
