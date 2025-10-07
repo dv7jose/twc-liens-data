@@ -2,8 +2,8 @@ name: Fast update CSV
 
 on:
   schedule:
-    - cron: "0 12 * * *"   # daily 7 AM CT
-  workflow_dispatch:
+    - cron: "0 12 * * *"   # every day at 7 AM CT
+  workflow_dispatch:        # allows manual runs from the Actions tab
 
 jobs:
   update:
@@ -12,23 +12,21 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # fetch full history so rebase works properly
 
       - name: Run Python script
         run: |
           pip install pandas openpyxl
           python update_liens.py
 
-          - name: Commit and push safely
-          run: |
-            git config user.name "github-actions"
-            git config user.email "actions@github.com"
-            git add liens.csv || true
-            git commit -m "auto-update liens CSV" || echo "No changes"
-  
-            # Always update the local main with the remote before pushing
-            git fetch origin main
-            git rebase origin/main || git rebase --skip
-  
-            # Push final version
-            git push origin HEAD:main
-
+      - name: Commit and push safely
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git fetch origin main
+          git checkout main
+          git pull origin main --rebase || true
+          git add liens.csv || true
+          git commit -m "auto-update liens CSV" || echo "No changes"
+          git push origin main || echo "No push needed"
