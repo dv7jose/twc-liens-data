@@ -24,4 +24,6 @@ jobs:
           git config user.email "actions@github.com"
           git add liens.csv || true
           git commit -m "auto-update liens CSV" || echo "No changes"
-          git push
+          git pull --rebase origin main || true
+          git push origin main || echo "No push needed"
+
