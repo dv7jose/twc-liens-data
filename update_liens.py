@@ -57,4 +57,22 @@ def title_clean(s):
     return s.title().replace("L.L.C.", "LLC").replace("L.L.C", "LLC").replace("Inc.", "Inc")
 
 df["employer_name"] = df["employer_name"].apply(title_clean)
-df["employer]()
+df["employer_address_1"] = df["employer_address_1"].apply(title_clean)
+df["employer_address_2"] = df["employer_address_2"].apply(title_clean)
+
+# Reorder columns
+df = df[
+    [
+        "employer_name",
+        "employer_address_1",
+        "employer_address_2",
+        "city",
+        "state_zip",
+        "first_date_of_lien",
+        "delinquent_amount",
+    ]
+]
+
+print(f"✅ Cleaned {len(df)} rows × {len(df.columns)} columns")
+df.to_csv("liens.csv", index=False)
+print("✅ liens.csv written successfully.")
