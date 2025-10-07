@@ -18,12 +18,17 @@ jobs:
           pip install pandas openpyxl
           python update_liens.py
 
-      - name: Commit and push
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add liens.csv || true
-          git commit -m "auto-update liens CSV" || echo "No changes"
-          git pull --rebase origin main || true
-          git push origin main || echo "No push needed"
+          - name: Commit and push safely
+          run: |
+            git config user.name "github-actions"
+            git config user.email "actions@github.com"
+            git add liens.csv || true
+            git commit -m "auto-update liens CSV" || echo "No changes"
+  
+            # Always update the local main with the remote before pushing
+            git fetch origin main
+            git rebase origin/main || git rebase --skip
+  
+            # Push final version
+            git push origin HEAD:main
 
