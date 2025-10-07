@@ -1,3 +1,32 @@
+name: Fast update CSV
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install LibreOffice
+        run: sudo apt-get update && sudo apt-get install -y libreoffice
+
+      - name: Run R script
+        run: |
+          Rscript update_liens.R
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add liens.csv || true
+          git commit -m "fast auto-update liens CSV" || echo "No changes"
+          git push
 name: Update TWC Liens CSV
 
 on:
