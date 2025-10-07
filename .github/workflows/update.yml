@@ -1,0 +1,33 @@
+name: Update TWC Liens CSV
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # every day 7 AM CT
+  workflow_dispatch:       # manual trigger option
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install dependencies
+        run: |
+          Rscript -e 'install.packages(c("httr2", "readxl", "readr"))'
+
+      - name: Run scraper
+        run: |
+          Rscript update_liens.R
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add liens.csv
+          git commit -m "auto-update liens CSV" || echo "No changes"
+          git push
+
